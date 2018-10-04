@@ -7,7 +7,7 @@
     "web-tester": "./bin/cli.js"
   },
   "scripts": {
-    "prepublish": "yarn checkstyle",
+    "prepublishOnly": "yarn checkstyle",
     "checkstyle": "eslint ./bin ./lib ./browser.js",
     "checkstyle-ci": "yarn checkstyle -f checkstyle -o eslint.xml"
   },

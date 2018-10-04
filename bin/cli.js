@@ -1,3 +1,4 @@
+#!/usr/bin/env node
 /* eslint global-require: 'off' */
 const path = require('path');
 const glob = require('glob');
