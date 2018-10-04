@@ -7,7 +7,9 @@
     "web-tester": "./bin/cli.js"
   },
   "scripts": {
-    "checkstyle": "eslint ./bin ./lib ./browser.js"
+    "prepublish": "yarn checkstyle",
+    "checkstyle": "eslint ./bin ./lib ./browser.js",
+    "checkstyle-ci": "yarn checkstyle -f checkstyle -o eslint.xml"
   },
   "dependencies": {
     "@kano/es6-resolution": "^1.0.8",
