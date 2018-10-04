@@ -15,7 +15,7 @@ function loadTest(src) {
 }
 
 export const loadTests = (tests, opts = {}) => {
-    window.mocha.setup(Object.assign({ ui: 'tdd' }, opts });
+    window.mocha.setup(Object.assign({ ui: 'tdd' }, opts));
     if (window.onMochaEvent) {
         window.mocha.globals(['onMochaEvent', 'onMochaEnd']);
         window.mocha.reporter('xunit');
