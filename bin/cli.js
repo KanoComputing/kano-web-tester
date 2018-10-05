@@ -2,6 +2,7 @@
 /* eslint global-require: 'off' */
 const path = require('path');
 const glob = require('glob');
+const yargs = require('yargs');
 
 function loadRC(rcPath) {
     let rc;
@@ -29,9 +30,10 @@ function resolveConf(root) {
     );
 }
 
-require('yargs') // eslint-disable-line
-    .command('serve <root>', 'start the server', (yargs) => {
-        yargs
+yargs // eslint-disable-line
+    .usage('Usage $0 <serve|run> [options]')
+    .command('serve <root>', 'start the server', (yar) => {
+        yar
             .positional('root', {
                 describe: 'test directory root',
                 default: './test',
@@ -52,8 +54,8 @@ require('yargs') // eslint-disable-line
         /* eslint no-console: 'off' */
         console.log(`Visit http://127.0.0.1:${argv.port} to run your tests`);
     })
-    .command('run <root>', 'run the tests', (yargs) => {
-        yargs
+    .command('run <root>', 'run the tests', (yar) => {
+        yar
             .positional('root', {
                 describe: 'test directory root',
                 default: './test',
