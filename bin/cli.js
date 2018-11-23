@@ -16,34 +16,33 @@ function loadRC(rcPath) {
 }
 
 function resolveConf(root) {
-    const testFiles = glob.sync(path.join(root, '/**/*.js'));
-    const rcCwdPath = path.resolve(path.join(process.cwd(), '.web-tester.conf.json'));
-    const rcPath = path.resolve(path.join(root, '.web-tester.conf.json'));
+    const testFiles = glob.sync(root);
+    const rcFiles = glob.sync(path.join(process.cwd(), '**/.web-tester.conf.json'));
+    const rcs = rcFiles.reduce((acc, p) => Object.assign(acc, loadRC(p)), {});
     return Object.assign(
         {
             root,
             cwd: process.cwd(),
         },
-        loadRC(rcCwdPath),
-        loadRC(rcPath),
+        rcs,
         { testFiles },
     );
 }
 
 yargs // eslint-disable-line
     .usage('Usage $0 <serve|run> [options]')
-    .command('serve <root>', 'start the server', (yar) => {
+    .command('serve <glob>', 'start the server', (yar) => {
         yar
-            .positional('root', {
-                describe: 'test directory root',
-                default: './test',
+            .positional('glob', {
+                describe: 'glob pattern of all test files',
+                default: '**/*.test.js',
             })
             .option('port', {
                 default: 8000,
             })
             .boolean('_example');
     }, (argv) => {
-        const conf = resolveConf(argv.root);
+        const conf = resolveConf(argv.glob);
         const opts = Object.assign(conf, {
             port: argv.port,
             _example: argv._example,
@@ -54,16 +53,16 @@ yargs // eslint-disable-line
         /* eslint no-console: 'off' */
         console.log(`Visit http://127.0.0.1:${argv.port} to run your tests`);
     })
-    .command('run <root>', 'run the tests', (yar) => {
+    .command('run <glob>', 'run the tests', (yar) => {
         yar
-            .positional('root', {
-                describe: 'test directory root',
-                default: './test',
+            .positional('glob', {
+                describe: 'glob pattern of all test files',
+                default: '**/*.test.js',
             })
             .boolean('_example')
             .boolean('headless');
     }, (argv) => {
-        const conf = resolveConf(argv.root);
+        const conf = resolveConf(argv.glob);
         const opts = Object.assign(conf, {
             port: argv.port,
             _example: argv._example,
