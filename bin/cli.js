@@ -16,15 +16,15 @@ function loadRC(rcPath) {
 }
 
 function resolveConf(root) {
-    const testFiles = glob.sync(root);
-    const rcFiles = glob.sync(path.join(process.cwd(), '**/.web-tester.conf.json'));
-    const rcs = rcFiles.reduce((acc, p) => Object.assign(acc, loadRC(p)), {});
+    const testFiles = glob.sync(root, { ignore: ['node_modules'] });
+    const rcFile = path.join(process.cwd(), '.web-tester.conf.json');
+    const rc = loadRC(rcFile);
     return Object.assign(
         {
             root,
             cwd: process.cwd(),
         },
-        rcs,
+        rc,
         { testFiles },
     );
 }
@@ -49,9 +49,15 @@ yargs // eslint-disable-line
         });
         const ServeRunner = require('../lib/serve');
         const runner = new ServeRunner(opts);
-        runner.run();
-        /* eslint no-console: 'off' */
-        console.log(`Visit http://127.0.0.1:${argv.port} to run your tests`);
+        runner.run()
+            .then(() => {
+                process.exit(0);
+            })
+            .catch((err) => {
+                /* eslint no-console: 'off' */
+                console.error(err);
+                process.exit(1);
+            });
     })
     .command('run <glob>', 'run the tests', (yar) => {
         yar
@@ -74,6 +80,14 @@ yargs // eslint-disable-line
         });
         const PuppeteerRunner = require('../lib/puppeteer');
         const runner = new PuppeteerRunner(opts);
-        runner.run();
+        runner.run()
+            .then(() => {
+                process.exit(0);
+            })
+            .catch((err) => {
+                /* eslint no-console: 'off' */
+                console.error(err);
+                process.exit(1);
+            });
     })
     .argv;
