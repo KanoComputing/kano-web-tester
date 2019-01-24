@@ -2,7 +2,7 @@
 /* eslint global-require: 'off' */
 const path = require('path');
 const glob = require('glob');
-const yargs = require('yargs');
+const sywac = require('sywac');
 
 function loadRC(rcPath) {
     let rc;
@@ -29,65 +29,62 @@ function resolveConf(root) {
     );
 }
 
-yargs // eslint-disable-line
+function applyDefault(s) {
+    s.positional('[glob]', {
+        describe: 'glob pattern of all test files',
+        defaultValue: '**/*.test.js',
+    }).boolean('_example');
+}
+
+function resolveArgv(argv) {
+    const conf = resolveConf(argv.glob);
+    return Object.assign(conf, {
+        port: argv.port,
+        _example: argv._example,
+    });
+}
+
+sywac // eslint-disable-line
     .usage('Usage $0 <serve|run> [options]')
-    .command('serve <glob>', 'start the server', (yar) => {
-        yar
-            .positional('glob', {
-                describe: 'glob pattern of all test files',
-                default: '**/*.test.js',
-            })
-            .option('port', {
-                default: 8000,
-            })
-            .boolean('_example');
-    }, (argv) => {
-        const conf = resolveConf(argv.glob);
-        const opts = Object.assign(conf, {
-            port: argv.port,
-            _example: argv._example,
-        });
-        const ServeRunner = require('../lib/serve');
-        const runner = new ServeRunner(opts);
-        runner.run()
-            .then(() => {
-                process.exit(0);
-            })
-            .catch((err) => {
-                /* eslint no-console: 'off' */
-                console.error(err);
-                process.exit(1);
+    .command('serve', {
+        desc: 'start the server',
+        setup: (yar) => {
+            applyDefault(yar);
+            yar.number('port', {
+                defaultValue: 8000,
             });
+        },
+        run: (argv) => {
+            const opts = resolveArgv(argv);
+            const ServeRunner = require('../lib/serve');
+            const runner = new ServeRunner(opts);
+            return runner.run();
+        },
     })
-    .command('run <glob>', 'run the tests', (yar) => {
-        yar
-            .positional('glob', {
-                describe: 'glob pattern of all test files',
-                default: '**/*.test.js',
-            })
-            .boolean('_example')
-            .boolean('headless');
-    }, (argv) => {
-        const conf = resolveConf(argv.glob);
-        const opts = Object.assign(conf, {
-            port: argv.port,
-            _example: argv._example,
-            puppeteer: {
-                headless: argv.headless,
-                slowMo: argv.slowMo,
-                timeout: argv.timeout,
-            },
-        });
-        const PuppeteerRunner = require('../lib/puppeteer');
-        const runner = new PuppeteerRunner(opts);
-        runner.run()
-            .then(() => {
-                process.exit(0);
-            })
-            .catch((err) => {
-                /* eslint no-console: 'off' */
-                console.error(err);
-                process.exit(1);
+    .command('run', {
+        desc: 'run the tests',
+        setup: (yar) => {
+            applyDefault(yar);
+            yar.boolean('noHeadless');
+        },
+        run: (argv) => {
+            const opts = resolveArgv(argv);
+            Object.assign(opts, {
+                puppeteer: {
+                    headless: !argv['no-headless'],
+                    slowMo: argv.slowMo,
+                    timeout: argv.timeout,
+                },
             });
-    })
-    .argv;
+            const PuppeteerRunner = require('../lib/puppeteer');
+            const runner = new PuppeteerRunner(opts);
+            return runner.run();
+        },
+    });
+
+sywac.parse(process.argv.slice(2)).then((result) => {
+    if (result.output.length) {
+        console.log(result.output);
+    }
+    process.exit(result.code);
+});

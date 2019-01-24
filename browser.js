@@ -42,7 +42,7 @@ export const loadTests = (tests, opts = {}) => {
         .then(() => {
             mocha.run(() => {
                 mocha.checkLeaks();
-                window.onMochaEvent({ name: 'results', args: window.jsonResults });
+                proxy('results', [window.jsonResults]);
             });
         });
 };
