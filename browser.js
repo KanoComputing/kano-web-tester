@@ -32,6 +32,7 @@ export const loadTests = (tests, opts = {}) => {
     mocha.setup(Object.assign(def, opts));
     mocha.reporter(JUnit, {
         proxy,
+        webOnly: !window.onMochaEvent,
     });
     setup(mocha);
     if (window.onMochaEvent) {

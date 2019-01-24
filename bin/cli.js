@@ -3,6 +3,7 @@
 const path = require('path');
 const glob = require('glob');
 const sywac = require('sywac');
+const chalk = require('chalk');
 
 function loadRC(rcPath) {
     let rc;
@@ -45,7 +46,6 @@ function resolveArgv(argv) {
 }
 
 sywac // eslint-disable-line
-    .usage('Usage $0 <serve|run> [options]')
     .command('serve', {
         desc: 'start the server',
         setup: (yar) => {
@@ -65,12 +65,18 @@ sywac // eslint-disable-line
         desc: 'run the tests',
         setup: (yar) => {
             applyDefault(yar);
-            yar.boolean('noHeadless');
+            yar.boolean('noHeadless')
+                .option('-r, --reporter', {
+                    type: 'string',
+                    desc: 'specify the reporter to use',
+                    defaultValue: 'xunit',
+                });
         },
         run: (argv) => {
             const opts = resolveArgv(argv);
             Object.assign(opts, {
                 puppeteer: {
+                    reporter: argv.reporter,
                     headless: !argv['no-headless'],
                     slowMo: argv.slowMo,
                     timeout: argv.timeout,
@@ -80,6 +86,15 @@ sywac // eslint-disable-line
             const runner = new PuppeteerRunner(opts);
             return runner.run();
         },
+    })
+    .configure({ name: 'web-tester' })
+    .showHelpByDefault()
+    .version('--version, -v')
+    .style({
+        group: s => chalk.cyan.bold(s),
+        desc: s => chalk.white(s),
+        hints: s => chalk.dim(s),
+        flagsError: s => chalk.red(s),
     });
 
 sywac.parse(process.argv.slice(2)).then((result) => {
