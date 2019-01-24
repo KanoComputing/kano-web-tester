@@ -99,6 +99,7 @@ sywac // eslint-disable-line
 
 sywac.parse(process.argv.slice(2)).then((result) => {
     if (result.output.length) {
+        // eslint-disable-next-line no-console
         console.log(result.output);
     }
     process.exit(result.code);
