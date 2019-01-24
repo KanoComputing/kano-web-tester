@@ -1,6 +1,9 @@
+/* globals mocha */
 import 'mocha/mocha.js';
 import 'chai/chai.js';
+import { stringify } from 'flatted/esm/index.js';
 import { fixture, setup } from './lib/fixture.js';
+import { JUnit } from './lib/reporter.js';
 
 window.assert = window.chai.assert;
 window.fixture = fixture;
@@ -16,27 +19,30 @@ function loadTest(src) {
     });
 }
 
+const proxy = (name, args) => {
+    if (typeof window.onMochaEvent === 'function') {
+        window.onMochaEvent({ name, args: args.map(arg => stringify(arg)) });
+    }
+};
+
 export const loadTests = (tests, opts = {}) => {
-    window.mocha.setup(Object.assign({ ui: 'tdd' }, opts));
-    setup(window.mocha);
+    const def = {
+        ui: 'tdd',
+    };
+    mocha.setup(Object.assign(def, opts));
+    mocha.reporter(JUnit, {
+        proxy,
+    });
+    setup(mocha);
     if (window.onMochaEvent) {
-        window.mocha.globals(['onMochaEvent', 'onMochaEnd']);
-        window.mocha.reporter('xunit');
+        mocha.globals(['onMochaEvent']);
     }
     const tasks = tests.map(t => loadTest(t));
     return Promise.all(tasks)
         .then(() => {
-            window.mocha.checkLeaks();
-            // Added by puppeteer test automation
-            if (window.onMochaEvent) {
-                window.mocha._reporter.prototype.write = (line) => {
-                    window.onMochaEvent(line);
-                };
-            }
-            window.mocha.run(() => {
-                if (window.onMochaEnd) {
-                    window.onMochaEnd();
-                }
+            mocha.run(() => {
+                mocha.checkLeaks();
+                window.onMochaEvent({ name: 'results', args: window.jsonResults });
             });
         });
 };
