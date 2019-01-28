@@ -30,10 +30,11 @@ export const loadTests = (tests, opts = {}) => {
         ui: 'tdd',
     };
     mocha.setup(Object.assign(def, opts));
-    mocha.reporter(JUnit, {
-        proxy,
-        webOnly: !window.onMochaEvent,
-    });
+    if (window.onMochaEvent) {
+        mocha.reporter(JUnit, {
+            proxy,
+        });
+    }
     setup(mocha);
     if (window.onMochaEvent) {
         mocha.globals(['onMochaEvent']);

@@ -6,6 +6,9 @@
   "bin": {
     "web-tester": "./bin/cli.js"
   },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "web-tester": "node ./bin/cli.js",
     "prepublishOnly": "yarn checkstyle",
