@@ -44,6 +44,9 @@ export const loadTests = (tests, opts = {}) => {
         .then(() => {
             mocha.run(() => {
                 mocha.checkLeaks();
+                if (window.__coverage__ && window.sendCoverage) {
+                    window.sendCoverage(window.__coverage__);
+                }
                 proxy('results', [window.jsonResults]);
             });
         });
