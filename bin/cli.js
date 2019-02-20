@@ -96,10 +96,18 @@ sywac // eslint-disable-line
                     type: 'string',
                     desc: 'specify the reporter to use',
                     defaultValue: 'text',
+                })
+                .option('--exclude', {
+                    type: 'array',
+                    desc: 'glob patterns of source files to exclude from coverage',
+                    defaultValue: [],
                 });
         },
         run: (argv) => {
             const opts = resolveArgv(argv);
+            const exclude = argv.exclude
+                .reduce((acc, x) => acc.concat(glob.sync(x, { ignore: ['node_modules'] })), [])
+                .map(x => path.resolve(x));
             Object.assign(opts, {
                 puppeteer: {
                     reporter: argv.reporter,
@@ -108,6 +116,7 @@ sywac // eslint-disable-line
                     timeout: argv.timeout,
                 },
                 coverage: true,
+                exclude,
             });
             const PuppeteerRunner = require('../lib/puppeteer');
             const runner = new PuppeteerRunner(opts);
