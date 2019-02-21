@@ -95,7 +95,7 @@ sywac // eslint-disable-line
                 .option('-r, --reporter', {
                     type: 'string',
                     desc: 'specify the reporter to use',
-                    defaultValue: 'text',
+                    defaultValue: 'text-summary',
                 })
                 .option('--exclude', {
                     type: 'array',
