@@ -69,7 +69,7 @@ sywac // eslint-disable-line
                 .option('-r, --reporter', {
                     type: 'string',
                     desc: 'specify the reporter to use',
-                    defaultValue: 'xunit',
+                    defaultValue: 'spec',
                 });
         },
         run: (argv) => {
@@ -81,6 +81,42 @@ sywac // eslint-disable-line
                     slowMo: argv.slowMo,
                     timeout: argv.timeout,
                 },
+            });
+            const PuppeteerRunner = require('../lib/puppeteer');
+            const runner = new PuppeteerRunner(opts);
+            return runner.run();
+        },
+    })
+    .command('cover', {
+        desc: 'run the tests and generate a coverage report',
+        setup: (yar) => {
+            applyDefault(yar);
+            yar.boolean('noHeadless')
+                .option('-r, --reporter', {
+                    type: 'string',
+                    desc: 'specify the reporter to use',
+                    defaultValue: 'text-summary',
+                })
+                .option('--exclude', {
+                    type: 'array',
+                    desc: 'glob patterns of source files to exclude from coverage',
+                    defaultValue: [],
+                });
+        },
+        run: (argv) => {
+            const opts = resolveArgv(argv);
+            const exclude = argv.exclude
+                .reduce((acc, x) => acc.concat(glob.sync(x, { ignore: ['node_modules'] })), [])
+                .map(x => path.resolve(x));
+            Object.assign(opts, {
+                puppeteer: {
+                    reporter: argv.reporter,
+                    headless: !argv['no-headless'],
+                    slowMo: argv.slowMo,
+                    timeout: argv.timeout,
+                },
+                coverage: true,
+                exclude,
             });
             const PuppeteerRunner = require('../lib/puppeteer');
             const runner = new PuppeteerRunner(opts);
