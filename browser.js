@@ -31,8 +31,8 @@ function loadTest(src) {
 }
 
 const proxy = (name, args) => {
-    if (typeof window.onMochaEvent === 'function') {
-        window.onMochaEvent({ name, args: args.map(arg => stringify(arg)) });
+    if (typeof window.__webTester_onMochaEvent === 'function') {
+        window.__webTester_onMochaEvent({ name, args: args.map(arg => stringify(arg)) });
     }
 };
 
@@ -41,22 +41,22 @@ export const loadTests = (tests, opts = {}) => {
         ui: 'tdd',
     };
     mocha.setup(Object.assign(def, opts));
-    if (window.onMochaEvent) {
+    if (window.__webTester_onMochaEvent) {
         mocha.reporter(JUnit, {
             proxy,
         });
     }
     setup(mocha);
     if (window.onMochaEvent) {
-        mocha.globals(['onMochaEvent', 'sendCoverage']);
+        mocha.globals(['__webTester_onMochaEvent', '__webTester_sendCoverage']);
     }
     const tasks = tests.map(t => loadTest(t));
     return Promise.all(tasks)
         .then(() => {
             mocha.run(() => {
                 mocha.checkLeaks();
-                if (window.sendCoverage) {
-                    window.sendCoverage(window.__coverage__);
+                if (window.__webTester_sendCoverage) {
+                    window.__webTester_sendCoverage(window.__coverage__);
                 }
                 proxy('results', [window.jsonResults]);
             });
