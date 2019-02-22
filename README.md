@@ -1,4 +1,4 @@
-# Web Tester
+# <img src="assets/icon.svg" width="36"> Web Tester
 
 Runs front-end mocha tests using puppeteer
 
