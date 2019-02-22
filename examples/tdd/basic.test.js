@@ -1,3 +1,4 @@
+import { assert } from '../../helpers.js';
 import { add } from './add.js';
 
 suite('TDD example', () => {

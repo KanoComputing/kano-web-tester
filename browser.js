@@ -5,8 +5,19 @@ import { stringify } from 'flatted/esm/index.js';
 import { fixture, setup } from './lib/fixture.js';
 import { JUnit } from './lib/reporter.js';
 
-window.assert = window.chai.assert;
-window.fixture = fixture;
+Object.defineProperty(window, 'assert', {
+    get: () => {
+        // next-line no-console
+        console.warn('Calling `assert` directly on the window is deprecated. Import it from `@kano/web-tester/helpers.js` instead');
+        return window.chai.assert;
+    },
+});
+
+window.fixture = (...args) => {
+    // eslint-disable-next-line no-console
+    console.warn('Calling `fixture` directly on the window is deprecated. Import it from `@kano/web-tester/helpers.js` instead');
+    return fixture(...args);
+};
 
 function loadTest(src) {
     return new Promise((resolve, reject) => {
@@ -37,14 +48,14 @@ export const loadTests = (tests, opts = {}) => {
     }
     setup(mocha);
     if (window.onMochaEvent) {
-        mocha.globals(['onMochaEvent']);
+        mocha.globals(['onMochaEvent', 'sendCoverage']);
     }
     const tasks = tests.map(t => loadTest(t));
     return Promise.all(tasks)
         .then(() => {
             mocha.run(() => {
                 mocha.checkLeaks();
-                if (window.__coverage__ && window.sendCoverage) {
+                if (window.sendCoverage) {
                     window.sendCoverage(window.__coverage__);
                 }
                 proxy('results', [window.jsonResults]);
