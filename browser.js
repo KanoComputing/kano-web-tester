@@ -4,6 +4,7 @@ import 'chai/chai.js';
 import { stringify } from 'flatted/esm/index.js';
 import { fixture, setup } from './lib/fixture.js';
 import { JUnit } from './lib/reporter.js';
+import { generateIcon, updateFavicon } from './lib/icon.js';
 
 Object.defineProperty(window, 'assert', {
     get: () => {
@@ -18,6 +19,25 @@ window.fixture = (...args) => {
     console.warn('Calling `fixture` directly on the window is deprecated. Import it from `@kano/web-tester/helpers.js` instead');
     return fixture(...args);
 };
+
+const mainIcon = document.body.querySelector('#main-icon');
+
+const icon = mainIcon.getAttribute('src');
+
+/**
+ * Updates the favicon and main icon with the provided color
+ * @param {string} color The status color to apply
+ */
+function updateColor(color) {
+    // Fetch and generate the icon
+    return generateIcon(icon, color)
+        .then((src) => {
+            // Set the mainIcon's source
+            mainIcon.src = src;
+            // Update all the favicons
+            return updateFavicon(src);
+        });
+}
 
 function loadTest(src) {
     return new Promise((resolve, reject) => {
@@ -53,12 +73,19 @@ export const loadTests = (tests, opts = {}) => {
     const tasks = tests.map(t => loadTest(t));
     return Promise.all(tasks)
         .then(() => {
-            mocha.run(() => {
+            const runner = mocha.run(() => {
                 mocha.checkLeaks();
                 if (window.__webTester_sendCoverage) {
                     window.__webTester_sendCoverage(window.__coverage__);
                 }
                 proxy('results', [window.jsonResults]);
+            });
+            runner.on('end', () => {
+                if (runner.failures) {
+                    updateColor('#d32f2f');
+                } else {
+                    updateColor('#4caf50');
+                }
             });
         });
 };
