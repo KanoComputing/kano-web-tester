@@ -1,3 +1,5 @@
+import { fixture } from '../../helpers.js';
+
 const exampleFixture = fixture`
     <button></button>
 `;

@@ -1,3 +1,4 @@
+import { assert } from '../../helpers.js';
 import { add } from './add.js';
 
 suite('TDD example', () => {
@@ -6,6 +7,6 @@ suite('TDD example', () => {
         assert.equal(res, 2);
     });
     test('should also run', () => {
-
+        
     });
 });
