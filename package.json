@@ -1,6 +1,6 @@
 {
   "name": "@kano/web-tester",
-  "version": "1.0.0-alpha.11",
+  "version": "1.0.0-alpha.14",
   "main": "index.js",
   "license": "MIT",
   "bin": {
