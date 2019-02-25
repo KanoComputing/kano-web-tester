@@ -8,7 +8,7 @@ import { generateIcon, updateFavicon } from './lib/icon.js';
 
 Object.defineProperty(window, 'assert', {
     get: () => {
-        // next-line no-console
+        // eslint-disable-next-line no-console
         console.warn('Calling `assert` directly on the window is deprecated. Import it from `@kano/web-tester/helpers.js` instead');
         return window.chai.assert;
     },
