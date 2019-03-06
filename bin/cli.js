@@ -93,9 +93,9 @@ sywac // eslint-disable-line
             applyDefault(yar);
             yar.boolean('noHeadless')
                 .option('-r, --reporter', {
-                    type: 'string',
+                    type: 'array:string',
                     desc: 'specify the reporter to use',
-                    defaultValue: 'text-summary',
+                    defaultValue: ['text-summary'],
                 })
                 .option('--exclude', {
                     type: 'array',

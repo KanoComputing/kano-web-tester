@@ -61,7 +61,7 @@ In your package.json add a test script as follow to automate your tests
 |`run`|`--no-headless`: Run puppeteer in no-headless mode. Displays the browser. Default: `false`|
 | |`--reporter`, `-r`: Sepecify which reporter to use, `spec` or `xunit`. Default: `spec`|
 |`cover`|`--no-headless`: Run puppeteer in no-headless mode. Displays the browser. Default: `false`|
-| |`--reporter`, `-r`: Sepecify which reporter to use. All istanbul reporters are available. Default: `text-summary`|
+| |`--reporter`, `-r`: Specify which reporter to use. All istanbul reporters are available. An additional `markdown` reporter is available to generate a markdown summary table. You can add multiple reports. Default: `text-summary`|
 
 ## Helpers
 
