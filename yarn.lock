@@ -90,10 +90,10 @@
     lodash "^4.17.11"
     to-fast-properties "^2.0.0"
 
-"@kano/es6-resolution@^1.0.8":
-  version "1.0.10"
-  resolved "https://registry.yarnpkg.com/@kano/es6-resolution/-/es6-resolution-1.0.10.tgz#c8b687cafa2598c9c89a27655392e386fdec76c8"
-  integrity sha512-JC3YcrJ3YNpCq4xH1uf0APANYCfZvficBSEc1gM1S5Iw7Qi7cU0QOpL5hCNBJCp9G/Mb47zDZjPud9EeCLQlmQ==
+"@kano/es6-resolution@^1.0.18":
+  version "1.0.18"
+  resolved "https://registry.yarnpkg.com/@kano/es6-resolution/-/es6-resolution-1.0.18.tgz#5060e7ae55be635db5f1c69440dd857b27b45427"
+  integrity sha512-DEHPkeSnofp9nbxNsQpIghmWivNi0s3xxpqDz9a0Zu+2OZDe/gQwXLykJSJc6XMzTGtzm5fy/wISgRxzL1AMpQ==
   dependencies:
     resolve "^1.7.1"
 

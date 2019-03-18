@@ -1,6 +1,6 @@
 {
   "name": "@kano/web-tester",
-  "version": "1.0.0-alpha.15",
+  "version": "1.0.0-alpha.16",
   "main": "index.js",
   "license": "MIT",
   "bin": {
@@ -16,7 +16,7 @@
     "checkstyle-ci": "yarn checkstyle -f checkstyle -o eslint.xml"
   },
   "dependencies": {
-    "@kano/es6-resolution": "^1.0.8",
+    "@kano/es6-resolution": "^1.0.18",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "connect": "^3.6.6",
