@@ -1,6 +1,6 @@
 {
   "name": "@kano/web-tester",
-  "version": "1.0.0-alpha.16",
+  "version": "1.0.0-alpha.19",
   "main": "index.js",
   "license": "MIT",
   "bin": {
@@ -13,10 +13,11 @@
     "web-tester": "node ./bin/cli.js",
     "prepublishOnly": "yarn checkstyle",
     "checkstyle": "eslint ./bin ./lib ./browser.js",
-    "checkstyle-ci": "yarn checkstyle -f checkstyle -o eslint.xml"
+    "checkstyle-ci": "yarn checkstyle -f checkstyle -o eslint.xml",
+    "postinstall": "node ./lib/puppeteer/download.js"
   },
   "dependencies": {
-    "@kano/es6-resolution": "^1.0.8",
+    "@kano/es6-resolution": "^1.0.18",
     "chai": "^4.2.0",
     "chalk": "^2.4.2",
     "connect": "^3.6.6",
@@ -30,7 +31,7 @@
     "mime": "^2.3.1",
     "mocha": "^5.2.0",
     "node-text-chunk": "^0.1.1",
-    "puppeteer": "^1.7.0",
+    "puppeteer-core": "^1.13.0",
     "resolve": "^1.8.1",
     "serve-static": "^1.13.2",
     "sywac": "^1.2.1",
